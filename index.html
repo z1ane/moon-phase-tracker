@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon Phase Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SunCalc.js for moonrise/moonset calculations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.8.0/suncalc.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .moon-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .moon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Style for the moon visibility bar */
+        .time-bar-bg {
+            background-color: #374151; /* gray-700 */
+            border-radius: 9999px;
+            height: 8px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .time-bar-progress {
+            background-color: #FBBF24; /* amber-400 */
+            border-radius: 9999px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+        }
+        .time-bar-now {
+            width: 4px;
+            height: 12px;
+            background-color: white;
+            border-radius: 2px;
+            position: absolute;
+            top: -2px;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl mx-auto text-center">
+        <!-- App Title -->
+        <h1 class="text-4xl md:text-5xl font-bold mb-2 text-yellow-300">Moon Phase Tracker</h1>
+        <p class="text-lg text-gray-400 mb-8">Follow the lunar cycle from your screen.</p>
+
+        <!-- Today's Moon Phase -->
+        <div id="today-container" class="mb-10">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-300">Today's Moon Phase</h2>
+            <div id="today-moon" class="bg-gray-800 rounded-xl p-6 inline-flex flex-col items-center justify-center shadow-lg border border-gray-700 moon-card">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <button id="forecast-btn" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+            Show Next 7 Days
+        </button>
+
+        <!-- 7-Day Forecast Container -->
+        <div id="forecast-container" class="mt-12 hidden">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-300">7-Day Forecast</h2>
+            <div id="forecast-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                <!-- Forecast cards will be injected by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-gray-500 text-sm">
+            <p>Built with 💛 for the cosmos.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const todayMoonContainer = document.getElementById('today-moon');
+        const forecastBtn = document.getElementById('forecast-btn');
+        const forecastContainer = document.getElementById('forecast-container');
+        const forecastGrid = document.getElementById('forecast-grid');
+
+        // Store user location
+        let userLocation = { lat: 11.2588, lon: 75.7804 }; // Default: Kozhikode, India
+        let locationPromise = null;
+
+        // Moon phase data: Emoji and Name
+        const moonPhases = [
+            { emoji: '🌑', name: 'New Moon' }, { emoji: '🌒', name: 'Waxing Crescent' },
+            { emoji: '🌓', name: 'First Quarter' }, { emoji: '🌔', name: 'Waxing Gibbous' },
+            { emoji: '🌕', name: 'Full Moon' }, { emoji: '🌖', name: 'Waning Gibbous' },
+            { emoji: '🌗', name: 'Last Quarter' }, { emoji: '🌘', name: 'Waning Crescent' }
+        ];
+
+        /**
+         * Calculates the moon phase for a given date.
+         */
+        function getMoonPhase(date) {
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            const day = date.getDate();
+            let c = 0, e = 0, jd = 0, b = 0;
+            if (month < 3) { year--; month += 12; }
+            month++;
+            c = 365.25 * year;
+            e = 30.6 * month;
+            jd = c + e + day - 694039.09;
+            jd /= 29.5305882;
+            b = parseInt(jd);
+            jd -= b;
+            b = Math.round(jd * 8);
+            if (b >= 8) b = 0;
+            return moonPhases[b];
+        }
+
+        /**
+         * Creates and returns an HTML element for a moon phase display.
+         */
+        function createMoonPhaseElement(date, phase, moonTimes, isToday = false) {
+            const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const formattedDate = date.toLocaleDateString('en-US', dateOptions);
+
+            const moonrise = moonTimes.rise ? new Date(moonTimes.rise).toLocaleTimeString('en-US', timeOptions) : 'N/A';
+            const moonset = moonTimes.set ? new Date(moonTimes.set).toLocaleTimeString('en-US', timeOptions) : 'N/A';
+
+            const container = document.createElement('div');
+            
+            if (isToday) {
+                 // Calculate visibility bar
+                const now = new Date();
+                const riseTime = moonTimes.rise ? new Date(moonTimes.rise) : null;
+                const setTime = moonTimes.set ? new Date(moonTimes.set) : null;
+                let progressPercent = 0;
+                let nowPercent = 0;
+
+                if (riseTime && setTime && riseTime < setTime) {
+                    const totalDuration = setTime - riseTime;
+                    const elapsed = now - riseTime;
+                    progressPercent = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
+                }
+                
+                if (riseTime && setTime) {
+                    const dayStart = new Date(now).setHours(0,0,0,0);
+                    const dayEnd = new Date(now).setHours(23,59,59,999);
+                    nowPercent = ((now - dayStart) / (dayEnd - dayStart)) * 100;
+                }
+
+                container.innerHTML = `
+                    <div class="text-8xl mb-3">${phase.emoji}</div>
+                    <div class="text-xl font-bold text-yellow-300">${phase.name}</div>
+                    <div class="text-md text-gray-400 mb-4">${formattedDate}</div>
+                    <div class="w-full max-w-xs mx-auto">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Rise: ${moonrise}</span>
+                            <span>Set: ${moonset}</span>
+                        </div>
+                        <div class="time-bar-bg">
+                            ${riseTime && setTime && riseTime < setTime ? `<div class="time-bar-progress" style="width:${progressPercent}%"></div>` : ''}
+                            <div class="time-bar-now" style="left:${nowPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.className = 'bg-gray-800 rounded-lg p-4 flex flex-col items-center justify-center shadow-md border border-gray-700 moon-card h-full';
+                container.innerHTML = `
+                    <div class="text-5xl mb-2">${phase.emoji}</div>
+                    <div class="font-semibold text-yellow-400 text-sm">${phase.name}</div>
+                    <div class="text-xs text-gray-500 mt-1 mb-2">${formattedDate}</div>
+                    <div class="text-xs text-gray-400">
+                        <div>Rise: ${moonrise}</div>
+                        <div>Set: ${moonset}</div>
+                    </div>
+                `;
+            }
+            return container;
+        }
+
+        /**
+         * Gets user's location via browser API.
+         */
+        function getLocation() {
+            if (locationPromise) return locationPromise;
+            
+            locationPromise = new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    console.warn("Geolocation is not supported by your browser. Using default location.");
+                    resolve(userLocation);
+                } else {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            userLocation = {
+                                lat: position.coords.latitude,
+                                lon: position.coords.longitude
+                            };
+                            resolve(userLocation);
+                        },
+                        () => {
+                            console.warn("Could not get location. Using default location.");
+                            resolve(userLocation); // Resolve with default on error
+                        }
+                    );
+                }
+            });
+            return locationPromise;
+        }
+
+        /**
+         * Displays the moon phase and times for today.
+         */
+        async function displayTodayPhase() {
+            const location = await getLocation();
+            const today = new Date();
+            const phase = getMoonPhase(today);
+            const moonTimes = SunCalc.getMoonTimes(today, location.lat, location.lon);
+            
+            todayMoonContainer.innerHTML = ''; // Clear previous
+            const todayElement = createMoonPhaseElement(today, phase, moonTimes, true);
+            todayMoonContainer.appendChild(todayElement);
+        }
+
+        /**
+         * Displays the moon phase forecast for the next 7 days.
+         */
+        async function displayForecast() {
+            const location = await getLocation();
+            forecastGrid.innerHTML = ''; // Clear previous forecast
+            
+            for (let i = 1; i <= 7; i++) {
+                const futureDate = new Date();
+                futureDate.setDate(futureDate.getDate() + i);
+                const phase = getMoonPhase(futureDate);
+                const moonTimes = SunCalc.getMoonTimes(futureDate, location.lat, location.lon);
+                const forecastElement = createMoonPhaseElement(futureDate, phase, moonTimes);
+                forecastGrid.appendChild(forecastElement);
+            }
+            
+            forecastContainer.classList.remove('hidden');
+            forecastBtn.textContent = 'Hide Forecast';
+        }
+
+        // Event listener for the forecast button
+        forecastBtn.addEventListener('click', () => {
+            if (forecastContainer.classList.contains('hidden')) {
+                displayForecast();
+            } else {
+                forecastContainer.classList.add('hidden');
+                forecastBtn.textContent = 'Show Next 7 Days';
+            }
+        });
+
+        // Initial load
+        displayTodayPhase();
+        // Update the time bar every minute
+        setInterval(displayTodayPhase, 60000);
+
+    </script>
+</body>
+</html>
