@@ -79,7 +79,7 @@
         }
     </style>
 </head>
-<body class="text-white min-h-screen flex items-center justify-center p-4 overflow-hidden galaxy-background">
+<body class="text-white min-h-screen flex items-center justify-center p-4 galaxy-background">
 
     <!-- Greeting Page -->
     <div id="greeting-page" class="w-full max-w-2xl mx-auto text-center page">
@@ -293,35 +293,26 @@
 
         // Event Listeners
         checkPhaseBtn.addEventListener('click', () => {
-            // This function handles the smooth transition between pages.
-            // 1. It adds the 'hidden' class to the greeting page, which triggers the CSS fade-out and scale-down animation.
             greetingPage.classList.add('hidden');
-            
-            // 2. It removes the 'hidden' class from the main page, which triggers the CSS fade-in and scale-up animation.
-            // Because the hidden page has 'position: absolute', the two pages cross-fade smoothly.
             mainPage.classList.remove('hidden');
+            document.body.style.overflow = 'auto'; // Allow scrolling on the main page
             
-            // Initial load for main page
             displayTodayPhase();
             
-            // Clear any previous interval to prevent duplicates
             if (timeUpdateInterval) clearInterval(timeUpdateInterval);
-            
-            // Update the time bar every minute
             timeUpdateInterval = setInterval(displayTodayPhase, 60000);
         });
 
         backToHomeBtn.addEventListener('click', () => {
-            // Transition back to the home screen following the same logic.
             mainPage.classList.add('hidden');
             greetingPage.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling on the greeting page
 
-            // Reset the forecast view after the transition out so it's fresh for the next visit.
             setTimeout(() => {
                 forecastContainer.style.maxHeight = '0px';
                 forecastContainer.classList.add('opacity-0', 'scale-95');
                 forecastBtn.textContent = 'Show Next 7 Days';
-            }, 600); // Match the CSS transition duration
+            }, 600); 
         });
 
         forecastBtn.addEventListener('click', () => {
@@ -335,6 +326,9 @@
                 forecastBtn.textContent = 'Show Next 7 Days';
             }
         });
+
+        // Set initial body overflow
+        document.body.style.overflow = 'hidden';
 
     </script>
 </body>
