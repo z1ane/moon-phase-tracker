@@ -56,10 +56,10 @@ function createMoonPhaseElement(date, phase, moonTimes, isToday = false) {
             const dayStart = new Date(now).setHours(0,0,0,0);
             nowPercent = ((now - dayStart) / (86400000)) * 100;
         }
-        container.innerHTML = `<div class="text-8xl mb-3">${phase.emoji}</div><div class="text-xl font-bold text-yellow-300">${phase.name}</div><div class="text-md text-gray-400 mb-4">${formattedDate}</div><div class="w-full max-w-xs mx-auto"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Rise: ${moonrise}</span><span>Set: ${moonset}</span></div><div class="time-bar-bg">${riseTime && setTime && riseTime < setTime ? <div class="time-bar-progress" style="width:${progressPercent}%"></div> : ''}<div class="time-bar-now" style="left:${nowPercent}%"></div></div></div>`;
+        container.innerHTML = `<div class="text-8xl mb-3">${phase.emoji}</div><div class="text-xl font-bold text-yellow-300">${phase.name}</div><div class="text-md text-gray-400 mb-4">${formattedDate}</div><div class="w-full max-w-xs mx-auto"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Rise: ${moonrise}</span><span>Set: ${moonset}</span></div><div class="time-bar-bg">${riseTime && setTime && riseTime < setTime ? `<div class="time-bar-progress" style="width:${progressPercent}%"></div>` : ''}<div class="time-bar-now" style="left:${nowPercent}%"></div></div></div>`;
     } else {
         container.className = 'bg-gray-800 bg-opacity-80 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center shadow-md border border-gray-700 moon-card h-full forecast-card';
-        container.innerHTML = <div class="text-5xl mb-2">${phase.emoji}</div><div class="font-semibold text-yellow-400 text-sm">${phase.name}</div><div class="text-xs text-gray-500 mt-1 mb-2">${formattedDate}</div><div class="text-xs text-gray-400"><div>Rise: ${moonrise}</div><div>Set: ${moonset}</div></div>;
+        container.innerHTML = `<div class="text-5xl mb-2">${phase.emoji}</div><div class="font-semibold text-yellow-400 text-sm">${phase.name}</div><div class="text-xs text-gray-500 mt-1 mb-2">${formattedDate}</div><div class="text-xs text-gray-400"><div>Rise: ${moonrise}</div><div>Set: ${moonset}</div></div>`;
     }
     return container;
 }
