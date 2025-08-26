@@ -17,6 +17,7 @@ A simple yet elegant web application to track the current and upcoming phases of
 2. **Allow Location Access:** For the most accurate moonrise and moonset times, allow the browser to access your location when prompted. If you decline, it will use a default location.  
 3. **View Today's Phase:** The current day's moon phase and visibility are displayed on the main screen.  
 4. **Check the Forecast:** Click the **"Show Next 7 Days"** button to see the forecast for the week ahead.
+5. **About the Moon:** Displays the information about the moon and some facts.
 
 ## **🛠️ Technologies Used**
 
