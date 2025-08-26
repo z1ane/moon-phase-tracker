@@ -9,11 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.8.0/suncalc.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- New Font: Quicksand -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Applied the new font here */
             font-family: 'Quicksand', sans-serif;
             background-color: #0B1120; /* Dark blue fallback */
         }
@@ -25,7 +23,6 @@
         }
         /* Page transition styles */
         .page {
-            /* Refined transition for a smoother effect */
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         .page.hidden {
@@ -54,7 +51,7 @@
         }
         /* Style for the moon visibility bar */
         .time-bar-bg {
-            background-color: #374151; /* gray-700 */
+            background-color: #374151;
             border-radius: 9999px;
             height: 8px;
             width: 100%;
@@ -62,7 +59,7 @@
             overflow: hidden;
         }
         .time-bar-progress {
-            background-color: #FBBF24; /* amber-400 */
+            background-color: #FBBF24;
             border-radius: 9999px;
             height: 100%;
             position: absolute;
@@ -94,242 +91,62 @@
 
     <!-- Main App Page -->
     <div id="main-page" class="w-full max-w-4xl mx-auto text-center page hidden relative">
-        <!-- Back Button -->
         <button id="back-to-home-btn" class="absolute top-0 left-0 bg-gray-800 bg-opacity-50 hover:bg-opacity-75 text-white font-bold py-2 px-4 rounded-full text-sm transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
             &larr; Home
         </button>
-        
-        <!-- App Title -->
         <h1 class="text-4xl md:text-5xl font-bold mb-2 text-yellow-300">Selenic</h1>
         <p class="text-lg text-gray-400 mb-8">Follow the lunar cycle from your screen.</p>
-
-        <!-- Today's Moon Phase -->
         <div id="today-container" class="mb-10">
             <h2 class="text-2xl font-semibold mb-4 text-gray-300">Today's Moon Phase</h2>
-            <div id="today-moon" class="bg-gray-800 bg-opacity-80 backdrop-blur-sm rounded-xl p-6 inline-flex flex-col items-center justify-center shadow-lg border border-gray-700 moon-card">
-                <!-- Content will be injected by JavaScript -->
-            </div>
+            <div id="today-moon" class="bg-gray-800 bg-opacity-80 backdrop-blur-sm rounded-xl p-6 inline-flex flex-col items-center justify-center shadow-lg border border-gray-700 moon-card"></div>
         </div>
-
-        <!-- Action Button -->
-        <button id="forecast-btn" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-lg">
-            Show Next 7 Days
-        </button>
-
-        <!-- 7-Day Forecast Container -->
+        <div class="flex flex-wrap justify-center gap-4">
+            <button id="forecast-btn" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-lg">
+                Show Next 7 Days
+            </button>
+            <button id="learn-more-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-lg">
+                About the Moon
+            </button>
+        </div>
         <div id="forecast-container" class="mt-12 origin-top transform transition-all duration-500 ease-in-out overflow-hidden opacity-0 scale-95" style="max-height: 0px;">
             <h2 class="text-2xl font-semibold mb-6 text-gray-300">7-Day Forecast</h2>
-            <div id="forecast-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                <!-- Forecast cards will be injected here -->
-            </div>
+            <div id="forecast-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4"></div>
         </div>
-        
-        <!-- Footer -->
         <footer class="mt-12 text-gray-500 text-sm">
             <p>Built with 💛 for the cosmos.</p>
         </footer>
     </div>
 
-    <script>
-        // DOM Elements
-        const greetingPage = document.getElementById('greeting-page');
-        const mainPage = document.getElementById('main-page');
-        const checkPhaseBtn = document.getElementById('check-phase-btn');
-        const backToHomeBtn = document.getElementById('back-to-home-btn');
-        const todayMoonContainer = document.getElementById('today-moon');
-        const forecastBtn = document.getElementById('forecast-btn');
-        const forecastContainer = document.getElementById('forecast-container');
-        const forecastGrid = document.getElementById('forecast-grid');
+    <!-- Info Page -->
+    <div id="info-page" class="w-full max-w-4xl mx-auto text-left page hidden relative bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-2xl shadow-2xl" style="height: 80vh; overflow-y: auto;">
+        <button id="back-to-main-btn" class="sticky top-4 left-4 z-10 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-full text-sm transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+            &larr; Back to Tracker
+        </button>
+        <div class="p-8 md:p-12 -mt-12">
+            <h1 class="text-4xl font-bold text-yellow-300 mb-8 text-center">About Our Moon</h1>
+            <div class="space-y-8 text-gray-300">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Understanding the Phases</h2>
+                    <p>The phases of the Moon are the different ways the Moon looks from Earth over about a month. As the Moon orbits our planet, the Sun lights up different parts of it. The "New Moon" occurs when the Moon is between Earth and the Sun, making it invisible to us. As it moves in its orbit, we see more of it lit up—this is the "waxing" phase. After the "Full Moon," when the entire face is illuminated, we see less and less of it, which is the "waning" phase.</p>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">How Was the Moon Formed?</h2>
+                    <p>The leading theory is the "Giant-Impact Hypothesis." It suggests that about 4.5 billion years ago, a Mars-sized object named Theia collided with the early Earth. This catastrophic impact sent a massive cloud of debris into orbit around our planet. Over time, this material clumped together due to gravity, eventually forming the Moon we see today.</p>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Fun Facts</h2>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>The Moon is slowly moving away from Earth at a rate of about 3.8 cm (1.5 inches) per year.</li>
+                        <li>The Moon has no atmosphere, which means it has no weather, no wind, and the sky is always black.</li>
+                        <li>Footprints left by the Apollo astronauts will likely remain on the Moon for millions of years because there is no wind or water to erode them.</li>
+                        <li>The Moon is not perfectly round; it's shaped more like an egg.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Store user location
-        let userLocation = { lat: 11.2588, lon: 75.7804 }; // Default: Kozhikode, India
-        let locationPromise = null;
-        let timeUpdateInterval = null;
-
-        // Moon phase data
-        const moonPhases = [
-            { emoji: '🌑', name: 'New Moon' }, { emoji: '🌒', name: 'Waxing Crescent' },
-            { emoji: '🌓', name: 'First Quarter' }, { emoji: '🌔', name: 'Waxing Gibbous' },
-            { emoji: '🌕', name: 'Full Moon' }, { emoji: '🌖', name: 'Waning Gibbous' },
-            { emoji: '🌗', name: 'Last Quarter' }, { emoji: '🌘', name: 'Waning Crescent' }
-        ];
-
-        function getMoonPhase(date) {
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            const day = date.getDate();
-            if (month < 3) { year--; month += 12; }
-            month++;
-            const c = 365.25 * year;
-            const e = 30.6 * month;
-            let jd = c + e + day - 694039.09;
-            jd /= 29.5305882;
-            let b = parseInt(jd);
-            jd -= b;
-            b = Math.round(jd * 8);
-            if (b >= 8) b = 0;
-            return moonPhases[b];
-        }
-
-        function createMoonPhaseElement(date, phase, moonTimes, isToday = false) {
-            const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' };
-            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
-            const formattedDate = date.toLocaleDateString('en-US', dateOptions);
-
-            const moonrise = moonTimes.rise ? new Date(moonTimes.rise).toLocaleTimeString('en-US', timeOptions) : 'N/A';
-            const moonset = moonTimes.set ? new Date(moonTimes.set).toLocaleTimeString('en-US', timeOptions) : 'N/A';
-
-            const container = document.createElement('div');
-            
-            if (isToday) {
-                const now = new Date();
-                const riseTime = moonTimes.rise ? new Date(moonTimes.rise) : null;
-                const setTime = moonTimes.set ? new Date(moonTimes.set) : null;
-                let progressPercent = 0;
-                let nowPercent = 0;
-
-                if (riseTime && setTime && riseTime < setTime) {
-                    const totalDuration = setTime - riseTime;
-                    const elapsed = now - riseTime;
-                    progressPercent = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
-                }
-                
-                if (riseTime && setTime) {
-                    const dayStart = new Date(now).setHours(0,0,0,0);
-                    const dayEnd = new Date(now).setHours(23,59,59,999);
-                    nowPercent = ((now - dayStart) / (dayEnd - dayStart)) * 100;
-                }
-
-                container.innerHTML = `
-                    <div class="text-8xl mb-3">${phase.emoji}</div>
-                    <div class="text-xl font-bold text-yellow-300">${phase.name}</div>
-                    <div class="text-md text-gray-400 mb-4">${formattedDate}</div>
-                    <div class="w-full max-w-xs mx-auto">
-                        <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>Rise: ${moonrise}</span>
-                            <span>Set: ${moonset}</span>
-                        </div>
-                        <div class="time-bar-bg">
-                            ${riseTime && setTime && riseTime < setTime ? `<div class="time-bar-progress" style="width:${progressPercent}%"></div>` : ''}
-                            <div class="time-bar-now" style="left:${nowPercent}%"></div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                container.className = 'bg-gray-800 bg-opacity-80 backdrop-blur-sm rounded-lg p-4 flex flex-col items-center justify-center shadow-md border border-gray-700 moon-card h-full forecast-card';
-                container.innerHTML = `
-                    <div class="text-5xl mb-2">${phase.emoji}</div>
-                    <div class="font-semibold text-yellow-400 text-sm">${phase.name}</div>
-                    <div class="text-xs text-gray-500 mt-1 mb-2">${formattedDate}</div>
-                    <div class="text-xs text-gray-400">
-                        <div>Rise: ${moonrise}</div>
-                        <div>Set: ${moonset}</div>
-                    </div>
-                `;
-            }
-            return container;
-        }
-
-        function getLocation() {
-            if (locationPromise) return locationPromise;
-            
-            locationPromise = new Promise((resolve) => {
-                if (!navigator.geolocation) {
-                    resolve(userLocation);
-                } else {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            userLocation = {
-                                lat: position.coords.latitude,
-                                lon: position.coords.longitude
-                            };
-                            resolve(userLocation);
-                        },
-                        () => resolve(userLocation)
-                    );
-                }
-            });
-            return locationPromise;
-        }
-
-        async function displayTodayPhase() {
-            const location = await getLocation();
-            const today = new Date();
-            const phase = getMoonPhase(today);
-            const moonTimes = SunCalc.getMoonTimes(today, location.lat, location.lon);
-            
-            todayMoonContainer.innerHTML = '';
-            const todayElement = createMoonPhaseElement(today, phase, moonTimes, true);
-            todayMoonContainer.appendChild(todayElement);
-        }
-
-        async function displayForecast() {
-            const location = await getLocation();
-            forecastGrid.innerHTML = '';
-            
-            const elements = [];
-            for (let i = 1; i <= 7; i++) {
-                const futureDate = new Date();
-                futureDate.setDate(futureDate.getDate() + i);
-                const phase = getMoonPhase(futureDate);
-                const moonTimes = SunCalc.getMoonTimes(futureDate, location.lat, location.lon);
-                const forecastElement = createMoonPhaseElement(futureDate, phase, moonTimes);
-                forecastGrid.appendChild(forecastElement);
-                elements.push(forecastElement);
-            }
-            
-            // Trigger staggered animation for cards
-            elements.forEach((el, index) => {
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, index * 100); // 100ms delay between each card
-            });
-
-            // Show the container
-            forecastContainer.classList.remove('opacity-0', 'scale-95');
-            forecastContainer.style.maxHeight = forecastContainer.scrollHeight + 'px';
-            forecastBtn.textContent = 'Hide Forecast';
-        }
-
-        // Event Listeners
-        checkPhaseBtn.addEventListener('click', () => {
-            greetingPage.classList.add('hidden');
-            mainPage.classList.remove('hidden');
-            document.body.style.overflow = 'auto'; // Allow scrolling on the main page
-            
-            displayTodayPhase();
-            
-            if (timeUpdateInterval) clearInterval(timeUpdateInterval);
-            timeUpdateInterval = setInterval(displayTodayPhase, 60000);
-        });
-
-        backToHomeBtn.addEventListener('click', () => {
-            mainPage.classList.add('hidden');
-            greetingPage.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling on the greeting page
-
-            setTimeout(() => {
-                forecastContainer.style.maxHeight = '0px';
-                forecastContainer.classList.add('opacity-0', 'scale-95');
-                forecastBtn.textContent = 'Show Next 7 Days';
-            }, 600); 
-        });
-
-        forecastBtn.addEventListener('click', () => {
-            const isHidden = forecastContainer.style.maxHeight === '0px';
-
-            if (isHidden) {
-                displayForecast();
-            } else {
-                forecastContainer.style.maxHeight = '0px';
-                forecastContainer.classList.add('opacity-0', 'scale-95');
-                forecastBtn.textContent = 'Show Next 7 Days';
-            }
-        });
-
-        // Set initial body overflow
-        document.body.style.overflow = 'hidden';
-
-    </script>
+    <!-- Link to your new JavaScript file -->
+    <script src="script.js"></script>
 </body>
 </html>
