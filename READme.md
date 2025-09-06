@@ -25,3 +25,4 @@ A simple yet elegant web application to track the current and upcoming phases of
 * **Tailwind CSS:** For modern and responsive styling.  
 * **JavaScript:** For all the logic, including phase calculations and fetching location data.  
 * **SunCalc.js:** A powerful library used for calculating moonrise and moonset times with high accuracy.
+* **Github Pages:** This website is being hosted on Github Pages.
